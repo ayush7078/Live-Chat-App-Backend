@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
 
-const Message = require('./models/Message'); // Make sure the Message model is correctly defined
+const Message = require('./models/Message'); 
 const app = express();
 
 // Middleware
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   // Fetch previous messages from the database and send them to the new user
-  Message.find().sort({ timestamp: 1 }).limit(50) // Fetch last 50 messages
+  Message.find().sort({ timestamp: 1 }).limit(50)
     .then(messages => {
       socket.emit('previousMessages', messages);
     })
@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Routes for API (optional, not used in WebSocket but available)
+// Routes for API
 app.get('/api/messages', async (req, res) => {
   try {
     const messages = await Message.find().sort({ timestamp: 1 });
@@ -61,6 +61,6 @@ app.get('/api/messages', async (req, res) => {
   }
 });
 
-// Use environment variable for port
+
 const port = process.env.PORT || 4000;
 server.listen(port, () => console.log(`Server running on http://localhost:${port}`));
