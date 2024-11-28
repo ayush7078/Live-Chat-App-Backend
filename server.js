@@ -2,20 +2,24 @@ const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
 const socketIo = require('socket.io');
+require('dotenv').config(); // Load environment variables
+
 const Message = require('./models/Message'); // Make sure the Message model is correctly defined
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Database Connection
-mongoose.connect('mongodb://localhost:27017/chatApp').then(() => console.log('MongoDB connected')).catch(err => console.error(err));
+// Database Connection using environment variable for MONGO_URI
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error(err));
 
 // HTTP Server and Socket.io
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000", // Replace with your frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Use environment variable for frontend URL
     methods: ["GET", "POST"],
   },
 });
@@ -57,4 +61,6 @@ app.get('/api/messages', async (req, res) => {
   }
 });
 
-server.listen(4000, () => console.log('Server running on http://localhost:4000'));
+// Use environment variable for port
+const port = process.env.PORT || 4000;
+server.listen(port, () => console.log(`Server running on http://localhost:${port}`));
